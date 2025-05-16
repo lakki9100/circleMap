@@ -8,5 +8,4 @@ const CategorySelector = ({ value, onChange }) => (
     </select>
   </div>
 );
-
 export default CategorySelector;

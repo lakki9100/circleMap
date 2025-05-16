@@ -1,6 +1,6 @@
 import RadiusSelector from './RadiusSelector';
 import CategorySelector from './CategorySelector';
-import PlaceGroupList from './PlaceGroupList';
+import SectionGroup from './SectionGroup';
 
 const Sidebar = ({
   radiusMiles,
@@ -15,8 +15,14 @@ const Sidebar = ({
     <RadiusSelector value={radiusMiles} onChange={setRadiusMiles} />
     <CategorySelector value={activeGroup} onChange={setActiveGroup} />
     <div style={{ marginTop: '1rem' }}>
-      {activeGroup === 'vacation' && <PlaceGroupList groups={vacationGroups} />}
-      {activeGroup === 'food' && <PlaceGroupList groups={foodGroups} />}
+      {activeGroup === 'vacation' &&
+        Object.entries(vacationGroups).map(([title, items]) => (
+          <SectionGroup key={title} title={title} items={items} />
+        ))}
+      {activeGroup === 'food' &&
+        Object.entries(foodGroups).map(([title, items]) => (
+          <SectionGroup key={title} title={title} items={items} />
+        ))}
     </div>
   </div>
 );

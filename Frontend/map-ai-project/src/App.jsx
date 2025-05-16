@@ -1,9 +1,7 @@
 import { useState } from 'react';
-import MapView from './components/Map/MapView';
 import Sidebar from './components/Sidebar/Sidebar';
+import MapContainer from './components/Map/MapContainer';
 import './App.css';
-import 'mapbox-gl/dist/mapbox-gl.css';
-
 
 function App() {
   const [radiusMiles, setRadiusMiles] = useState(10);
@@ -21,9 +19,8 @@ function App() {
         setActiveGroup={setActiveGroup}
         foodGroups={foodGroups}
         vacationGroups={vacationGroups}
-        userLocation={userLocation}
       />
-      <MapView
+      <MapContainer
         radiusMiles={radiusMiles}
         setUserLocation={setUserLocation}
         setFoodGroups={setFoodGroups}
