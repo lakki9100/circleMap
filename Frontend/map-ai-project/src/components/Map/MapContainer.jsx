@@ -1,13 +1,22 @@
+// 📄 src/components/Map/MapContainer.jsx (updated to support HoverLine)
 import { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import * as turf from '@turf/turf';
 import axios from 'axios';
 import { MAPBOX_TOKEN } from '../../config';
 import { getUserGeolocation } from '../../services/geolocationService';
+import HoverLine from './HoverLine';
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
-const MapContainer = ({ radiusMiles, setUserLocation, setFoodGroups, setVacationGroups }) => {
+const MapContainer = ({
+  radiusMiles,
+  setUserLocation,
+  setFoodGroups,
+  setVacationGroups,
+  userLocation,
+  hoveredPlace
+}) => {
   const mapContainer = useRef(null);
   const mapRef = useRef(null);
   const markerRef = useRef(null);
@@ -26,30 +35,25 @@ const MapContainer = ({ radiusMiles, setUserLocation, setFoodGroups, setVacation
     setMapInitialized(true);
   }, []);
 
-useEffect(() => {
-  if (!mapInitialized) return;
+  useEffect(() => {
+    if (!mapInitialized) return;
 
-  getUserGeolocation()
-    .then(({ lat, lng }) => {
-      setUserLocation({ lat, lng });
-
-      // ✅ Create an object that exactly mimics the click event
-      handleMapClick({
-        lngLat: {
-          lng,
-          lat,
-          toArray: () => [lng, lat],  // this ensures turf.circle and mapbox use it correctly
-        }
+    getUserGeolocation()
+      .then(({ lat, lng }) => {
+        setUserLocation({ lat, lng });
+        handleMapClick({
+          lngLat: {
+            lng,
+            lat,
+            toArray: () => [lng, lat]
+          }
+        });
+        mapRef.current.flyTo({ center: [lng, lat], zoom: 11 });
+      })
+      .catch((err) => {
+        console.warn('Geolocation error:', err.message);
       });
-
-      mapRef.current.flyTo({ center: [lng, lat], zoom: 11, speed: 1.2 });
-    })
-    .catch((err) => {
-      console.log('Geolocation error:', err.message);
-    });
-}, [mapInitialized]);
-
-
+  }, [mapInitialized]);
 
   useEffect(() => {
     if (!mapRef.current) return;
@@ -97,7 +101,12 @@ useEffect(() => {
     }
   };
 
-  return <div ref={mapContainer} className="map-container" />;
+  return (
+    <>
+      <div ref={mapContainer} className="map-container" />
+      <HoverLine map={mapRef.current} userLocation={userLocation} hoveredPlace={hoveredPlace} />
+    </>
+  );
 };
 
 export default MapContainer;
