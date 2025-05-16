@@ -7,6 +7,7 @@ function App() {
   const [radiusMiles, setRadiusMiles] = useState(10);
   const [activeGroup, setActiveGroup] = useState('');
   const [userLocation, setUserLocation] = useState(null);
+  const [hoveredPlace, setHoveredPlace] = useState(null);
   const [foodGroups, setFoodGroups] = useState({});
   const [vacationGroups, setVacationGroups] = useState({});
 
@@ -19,12 +20,15 @@ function App() {
         setActiveGroup={setActiveGroup}
         foodGroups={foodGroups}
         vacationGroups={vacationGroups}
+        onHover={setHoveredPlace}
       />
       <MapContainer
         radiusMiles={radiusMiles}
         setUserLocation={setUserLocation}
         setFoodGroups={setFoodGroups}
         setVacationGroups={setVacationGroups}
+        userLocation={userLocation}
+        hoveredPlace={hoveredPlace}
       />
     </div>
   );
