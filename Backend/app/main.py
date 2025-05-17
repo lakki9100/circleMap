@@ -4,16 +4,20 @@ from fastapi.middleware.cors import CORSMiddleware
 import requests, os
 from dotenv import load_dotenv
 from collections import defaultdict
+import os
+from pydantic import BaseModel
+import google.generativeai as genai
+
 
 load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 GOOGLE_PLACES_API_KEY = os.getenv("GOOGLE_PLACES_API_KEY")
-
 app = FastAPI()
 
-# ✅ Enable CORS for frontend on port 5174
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # not safe for production
+    allow_origins=["*"],  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -97,3 +101,16 @@ def normalize_vacation(tag: str) -> str:
         "art_gallery": "galleries",
     }
     return known.get(tag)
+
+class ChatRequest(BaseModel):
+    place_name: str
+    message: str
+
+@app.post("/chat")
+def chat(request: ChatRequest):
+    model = genai.GenerativeModel("models/gemini-1.5-flash-latest")
+
+    response = model.generate_content(
+        f"You are a helpful assistant answering questions about {request.place_name}. User asked: {request.message}"
+    )
+    return {"reply": response.text}

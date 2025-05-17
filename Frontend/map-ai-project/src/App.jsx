@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import './App.css';
 import MapContainer from './components/Map/MapContainer';
 import Sidebar from './components/Sidebar/Sidebar';
-import ChatModal from './ui/ChatModal';
+import ChatModal from './components/Chat/ChatModal'; 
 
 function App() {
   const [radiusMiles, setRadiusMiles] = useState(10);
@@ -14,8 +14,7 @@ function App() {
   const [foodGroups, setFoodGroups] = useState({});
   const [vacationGroups, setVacationGroups] = useState({});
 
-  const [chatPlace, setChatPlace] = useState(null);
-  const [chatMessages, setChatMessages] = useState([]);
+  const [selectedPlace, setSelectedPlace] = useState(null); // ✅ Replaces chatPlace/messages
 
   return (
     <>
@@ -28,10 +27,7 @@ function App() {
           foodGroups={foodGroups}
           vacationGroups={vacationGroups}
           onHover={setHoveredPlace}
-          onItemClick={(place) => {
-            setChatPlace(place.name);
-            setChatMessages([]);
-          }}
+          onItemClick={(place) => setSelectedPlace(place)} // ✅ Open chat
         />
 
         <MapContainer
@@ -45,14 +41,10 @@ function App() {
         />
       </div>
 
-      {chatPlace && (
+      {selectedPlace && (
         <ChatModal
-          placeName={chatPlace}
-          messages={chatMessages}
-          onClose={() => setChatPlace(null)}
-          onSendMessage={(msg) => {
-            setChatMessages((prev) => [...prev, { text: msg, from: 'user' }]);
-          }}
+          placeName={selectedPlace.name}
+          onClose={() => setSelectedPlace(null)}
         />
       )}
     </>
