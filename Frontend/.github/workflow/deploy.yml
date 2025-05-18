@@ -1,0 +1,54 @@
+name: Deploy Frontend to Firebase Hosting
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Build and Deploy Frontend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      # Authenticate to GCP using service account key from GitHub secrets
+      - name: Authenticate with GCP
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+
+      - name: Set up gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+
+      # Pull GCP secrets and write to .env file for Vite
+      - name: Generate .env from GCP Secret Manager
+        run: |
+          echo "VITE_MAPBOX_TOKEN=$(gcloud secrets versions access latest --secret=MAPBOX_TOKEN)" >> .env
+          echo "VITE_GOOGLE_PLACES_API_KEY=$(gcloud secrets versions access latest --secret=GOOGLE_PLACES_API_KEY)" >> .env
+        working-directory: ./Frontend/map-ai-project
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./Frontend/map-ai-project
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: ./Frontend/map-ai-project
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: "${{ secrets.FIREBASE_PROJECT_ID }}"
+        env:
+          FIREBASE_CLI_PREVIEWS: hostingchannels
+        working-directory: ./Frontend/map-ai-project

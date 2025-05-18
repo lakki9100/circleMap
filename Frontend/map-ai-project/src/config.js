@@ -1,3 +1,3 @@
-    // config.js
-export const MAPBOX_TOKEN = 'pk.eyJ1IjoibGFra2lyZWRkeTkxMDAiLCJhIjoiY21hcTNjZjBxMDNjNzJrb3Bkc3U2dHRmNiJ9.iqb-3rEi_onl-1YoiH9Z1g';
-export const GOOGLE_PLACES_API_KEY = 'AIzaSyACXiBgEpB8QhY1YhtrGp0B8vGY8GDLa6Q';
+// config.js
+export const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN;
+export const GOOGLE_PLACES_API_KEY = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
