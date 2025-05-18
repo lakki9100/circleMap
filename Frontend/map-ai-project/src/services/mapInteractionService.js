@@ -28,7 +28,7 @@ export async function handleMapClick({
   const originParams = isGeo ? { origin_lat: lat, origin_lng: lng } : {};
 
   try {
-    const foodRes = await axios.get('http://localhost:8000/restaurants', {
+    const foodRes = await axios.get('https://map-backend-5z5ynzgq6q-uc.a.run.app/restaurants', {
       params: { lat, lng, radius, ...originParams },
     });
     setFoodGroups(foodRes.data);
@@ -37,7 +37,7 @@ export async function handleMapClick({
   }
 
   try {
-    const vacRes = await axios.get('http://localhost:8000/vacation_spots', {
+    const vacRes = await axios.get('https://map-backend-5z5ynzgq6q-uc.a.run.app/vacation_spots', {
       params: { lat, lng, radius, ...originParams },
     });
     setVacationGroups(vacRes.data);
